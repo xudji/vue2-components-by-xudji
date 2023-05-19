@@ -55,6 +55,27 @@ const routes = [
         },
 
     },
+    {
+        path: '/Export2Excel',
+        name: 'Export2Excel',
+        component: () => import(/* webpackChunkName: "login" */ '@/views/export2Excel'),
+        meta: {
+            title: '导出excel',
+            auth: false
+        },
+
+    },
+
+    {
+        path: '/UploadExcel',
+        name: 'UploadExcel',
+        component: () => import(/* webpackChunkName: "login" */ '@/views/uploadExcel'),
+        meta: {
+            title: '导入excel',
+            auth: false
+        },
+
+    }
 
 
 

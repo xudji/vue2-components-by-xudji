@@ -459,7 +459,7 @@ this.$msgBox
   });
 ```
 
-使用的逻辑:
+### 使用的逻辑:
 
 1. 在需要显示确认对话框的事件处理函数中调用 `this.$msgBox.showMsgBox({ ... })` 方法。
 2. 将需要显示的标题、内容等信息传递给 `showMsgBox({ ... })` 方法。
@@ -495,3 +495,120 @@ this.$msgBox
 4. 接着定义了 `initInstance` 方法，该方法用于初始化当前的弹框实例。在该方法中，首先判断当前是否已经存在 `MessageBox` 实例，如果不存在，则创建一个新的实例并将其挂载到 DOM 中；否则直接使用已有的实例。
 5. 在 Vue 原型上定义了一个 `$msgBox` 的属性，该属性的值是一个对象。该对象中包含了一个 `showMsgBox` 方法，用于展示弹框。在该方法中，首先调用 `initInstance` 方法初始化实例，然后根据传入的参数设置弹框的内容和标题等信息。接着，调用实例的 `showMsgBox` 方法展示弹框，并且返回 `Promise` 对象，通过 `Promise.then()` 或者 `Promise.catch()` 方法分别处理确认和取消按钮的点击事件。
 6. 最后，将 `MessageBox` 对象导出。
+
+## Export2Excel
+
+实现了列表数据导出到Excel文件中的功能，通过使用格式化方法和专业的Excel库来生成符合需求的Excel表格
+
+### 使用方式
+
+安装插件所需要的依赖
+
+npm install file-saver -S npm install xlsx -S npm install script-loader -D
+
+引入 `Export2Excel.js` 到项目中，在`Export2Excel.js`中 注意需要使用这种方式引入`require('script-loader!file-saver')  import XLSX from 'xlsx'`
+
+```javascript
+ //excel 导出
+    handleDownload() {
+      this.downloadLoading = true;
+      import("@/components/Export2Excel/Export2Excel").then((excel) => {
+        // 表头
+        const tHeader = ["序号", "日期", "名字", "地址"];
+        // 对应的list中的数据项字段名
+        const filterVal = ["index", "date", "name", "address"];
+        // 列表需要导出的列表
+        const list = this.productList;
+        const data = this.formatJson(filterVal, list);
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: this.filename,
+          autoWidth: this.autoWidth,
+          bookType: this.bookType,
+        });
+        this.downloadLoading = false;
+      });
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map((v) =>
+        filterVal.map((j) => {
+          return v[j];
+        })
+      );
+    },
+```
+
+### 使用的逻辑
+
+1. 当用户点击“下载”按钮时，会触发handleDownload方法。
+2. handleDownload方法中，使用动态import语法来异步加载Export2Excel组件，并在Promise回调中取得Excel导出对象excel。
+3. 定义Excel表格的表头（tHeader）和需要导出的字段名（filterVal），并将要导出的数据放在list变量中。
+4. 调用formatJson方法，将list中的数据格式化为二维数组，每个小数组代表一行数据，每个元素代表一列数据。
+5. 调用Excel的export_json_to_excel方法，将处理好的数据导出为Excel文件。
+
+具体来说，formatJson方法通过map函数对jsonData进行遍历，返回一个新的数组即data。每个元素都是数组类型，其长度与filterVal相同，而元素的值是从jsonData中按照filterVal指定的属性名依次取出的值。也就是说，这个方法掌握了如何从jsonData中取出特定属性，并按照指定的顺序将这些值保存到一个数组中。
+
+最后，调用Excel的export_json_to_excel方法将数据导出到Excel文件中。为了格式化Excel文件，需要提供导出的数据（data）、表头（header）、档案类型（bookType）、文件名称（filename）和自动列宽标志（autoWidth）等参数，以便生成一个符合要求格式的Excel表格。
+
+### 实现的逻辑
+
+这段代码实现了将HTML表格导出为Excel文件的功能。具体逻辑如下：
+
+1. 通过HTML中表格的id获取到表格元素。
+2. 调用generateArray函数将表格转化为一个二维数组，其中数组中每个元素代表表格中的一个单元格，同时记录合并单元格的范围。
+3. 通过sheet_from_array_of_arrays函数将二维数组转化为符合XLSX格式的工作簿（Workbook）中的工作表（Worksheet）对象，并使用XLSX.utils.encode_range函数将合并的单元格范围转化为XLSX可读取的范围字符串，存入工作表的'!merges'属性。
+4. 如果autoWidth为true，则通过设置每列单元格最大宽度，自动调整表格列宽。
+5. 调用XLSX.write函数将工作簿对象（Workbook）转化为二进制数据，并调用saveAs函数将二进制数据存储为Excel文件。
+6. 若导出的是JSON数据，则先按要求组装数据，再转为二维数组。其中multiHeader是多级表头数据，header是表头数据，data是表格数据。若需要合并单元格，则需传入merges数组，其中每个元素代表一个合并的单元格范围。autoWidth和excelWidth分别代表是否自动调整单元格宽度和是否按照特定规则调整单元格宽度。
+7. 具体的代码实现中，还涉及许多处理单元格值的细节，如对于空值的处理、日期类型数据的转换、数字类型数据的处理等。
+
+## UploadExcel
+
+封装了[UploadExcel](https://github.com/PanJiaChen/vue-element-admin/blob/master/src/components/UploadExcel/index.vue)Excel 导入组件，支持点击和拖拽上传，同样它也是依赖`js-xlsx`的
+
+### 使用的方式
+
+`npm install xlsx file-saver -S`
+`npm install script-loader -S -D`
+
+```html
+ <UploadExcelComponent
+      :on-success="handleSuccess"
+      :before-upload="beforeUpload"
+    />
+    <el-table
+      :data="tableData"
+      border
+      highlight-current-row
+      style="width: 100%; margin-top: 20px"
+    >
+      <el-table-column
+        v-for="item of tableHeader"
+        :key="item"
+        :prop="item"
+        :label="item"
+      />
+```
+
+### 使用的逻辑
+
+1. 用户在页面上选择要上传的Excel文件；
+2. 执行 `beforeUpload` 方法，判断文件大小是否小于 1M，若符合要求则返回 `true`，否则提示用户不可上传超过 1M 的文件并返回 `false`；
+3. 当文件上传成功后，调用 `handleSuccess` 方法，将 Excel 表格数据转换成对应的格式并显示在页面上。同时，把数据按照需要的格式存储起来，然后再发送到后端进行处理。
+
+其中，`format` 方法是用于将表格中的数据按照后端的命名规范进行转换。它会根据表格中每个属性的中文名称找到对应的英文名称，并将其作为新对象的属性名。同时，如果当前属性名是日期相关的，则需要调用 `formatExcelDate` 方法将 Excel 中的日期格式转换成编程语言中的日期格式。最后返回转换后的结果列表。
+
+### 实现的逻辑
+
+这段代码实现了一个Excel文件上传组件，具体逻辑如下：
+
+1. 通过选择文件或拖放文件的方式上传Excel文件。
+2. 判断文件是否符合要求，支持上传 .xlsx, .xls, .csv 格式文件。
+3. 将上传的Excel文件读取为二维数组形式的表格数据，并将表格数据转化为包含表头和数据的对象。
+4. 将读取到的表格数据通过回调函数传递给父组件进行处理。
+5. 组件支持设置 beforeUpload 和 onSuccess 两个属性，beforeUpload 属性可以在上传前对文件进行操作，例如限制文件大小，onSuccess 属性则在文件上传成功后通过回调函数返回表格数据对象。
+6. 组件中使用了 XLSX 库解析 Excel 文件，通过 XLSX.read 函数将二进制数据转化为工作簿（Workbook）对象，再通过 XLSX.utils.sheet_to_json 将工作表（Worksheet）对象转化为二维数组。
+7. 组件还实现了基础的错误处理措施，如在选择多个文件或文件格式不正确时提示用户错误信息，并禁止文件上传过程中再次触发上传方法。
+8. 组件中使用 Promise 对象保证上传和读取文件的异步过程的顺序执行。
+9. 组件提供相应的事件处理函数来监听拖拽、点击上传等行为。
