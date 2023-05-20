@@ -3,6 +3,8 @@
     <p>最全功能(组合排序+筛选+slot插槽+过滤器+操作列+展开行+自定义分页)</p>
     <table-custom
       type="selection"
+      :stripe="stripe"
+      :border="border"
       :loading="loading"
       :table-data="tableData"
       :table-column="tableColumn"
@@ -29,7 +31,6 @@
           </div>
         </template>
       </el-table-column>
-
       <template v-slot:status="{ row }">
         <el-tag :type="row.status | statusFilter">
           {{ row.status | labelFilter }}
@@ -183,6 +184,8 @@ export default {
           },
         ],
       },
+      stripe: true,
+      border: true,
       filterCondition: [],
       pagination: true,
       pageSizes: [1, 3, 5, 8],
@@ -214,11 +217,14 @@ export default {
       };
       return labelMap[val];
     },
-    handleButtonClick(param) {
-      this.$message({
-        message: param,
-        type: "info",
-      });
+    handleButtonClick({ methods, row }) {
+      if (methods === "edit") {
+        // 执行编辑操作
+        console.log(`编辑第 ${row.id} 行数据:`, row);
+      } else if (methods === "delete") {
+        // 执行删除操作
+        console.log(`删除第 ${row.id} 行数据:`, row);
+      }
     },
     handleSortChange({ column, prop, order }) {
       this.$message({
@@ -234,22 +240,23 @@ export default {
         type: "info",
       });
     },
+
     handleCurrentChange(current) {
       this.$message({
         message: `当前页: ${current}`,
         type: "info",
       });
-      // this.currentPage = current
-      // this.queryTable()
+      // this.currentPage = current;
+      // this.queryTable();
     },
     handleSizeChange(size) {
       this.$message({
         message: `每页 ${size} 条`,
         type: "info",
       });
-      // this.currentPage = 1
-      // this.pageSize = size
-      // this.queryTable()
+      // this.currentPage = 1;
+      // this.pageSize = size;
+      // this.queryTable();
     },
   },
 };

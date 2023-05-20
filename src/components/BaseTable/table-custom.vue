@@ -127,12 +127,12 @@ export default {
     stripe: {
       // 带斑马纹的表格
       type: Boolean,
-      default: true,
+      default: false,
     },
     border: {
       // Table具有竖直方向的边框的
       type: Boolean,
-      default: true,
+      default: false,
     },
     type: {
       /**
@@ -219,7 +219,7 @@ export default {
     },
     toggleExpand(row) {
       // 用于可展开表格与树形表格，切换某一行的展开状态
-      this.$refs.table.toggleRowExpansion(row);
+      // this.$refs.table.toggleRowExpansion(row);
     },
     handleSizeChange(size) {
       this.$emit("handle-size-change", size);

@@ -1,93 +1,5 @@
 # vue2 组件封装 by xudji
 
-## 树形选择器组件
-
-### 使用方式
-
-用户需要在组件中传入一个列表数据，将该列表转换成树形结构，然后渲染成可点击的树形结构。用户可以通过点击节点获取该节点的值，并将其显示在组件中。
-
-```html
-<Tree
-  :treeProps="props"
-  :options="treeSelecList"
-  v-model="valueId"
-  :clearable="isClearable"
-  :accordion="isAccordion"
-  :expandNode="expandNode"
-  size="small"
-  width="100%"
-  @getValue="getValue($event)"
->
-</Tree>
-```
-
-#### 参数
-
-- `multiple`: 是否可多选，默认为 false，单选模式。
-- `clearable`: 可清空选项，默认为 true。
-
-- `treeProps`: 配置项，包括选项数据的 id、label、children 字段名，默认值为 `{ id: 'id', label: 'title', children: 'children' }`。 
-
-- `options`: 选项列表数据，树形结构的对象数组，默认值为 `[]`。 `accordion`: 自动收起节点，默认为 false。 
-
-- `checkStrictly`: 在显示复选框的情况下，是否严格的遵循父子不互相关联的做法，默认为 false。 `expand`: 是否展开所有节点，默认展开。
-
--  `expandParent`: 展开子节点的时候是否自动展开父节点，默认为 true。
-
--  `expandNode`: 是否在点击节点的时候展开或者收缩节点，默认值为 true，如果为 false，则只有点箭头图标的时候才会展开或者收缩节点。
-
--  `value`: 初始值，绑定 value 是为了外面也可以传值改变到里面的值双向绑定，默认为 null。
-
-- `collapse`: 多选时是否将选中值按文字的形式展示，默认为 false。 
-
-- ` size`: 选择框大小，默认为 small。
-
--  `width`: 选择框宽度，默认为 270px。 `disabled`: 是否禁用，默认为 false
-
-#### 方法
-
-- `input`: 组件值更新时触发的方法，在单选模式下 event 参数为当前选中项的 id，在多选模式下 event 参数为当前选中项的 id 组成的数组。
-- `clear`: 清空选项时触发的方法。
-- `remove-tag`: 多选模式下任一标签被删除时触发的方法。
-- `getValue`: 选项发生变化时触发的方法，在多选模式下 `valueId` 参数为当前选中项的 id 组成的数组，在单选模式下 `valueId` 参数为当前选中项的 id，`valueTitle` 参数为当前选中项的名称。
-
-### 使用逻辑
-
-1. 在 data 中定义一些需要用到的变量，包括 `props`、`list`、`treeSelecList`、`isClearable`、`isAccordion`、`expandNode`、`valueId`、`valueIds`、`valueIds2`，其中 `props` 是树形结构中的一些属性配置，`list` 是传入的列表数据，其他变量是一些控制树形选择器行为的开关和选中值。
-2. 在 created 钩子函数中调用 `initData` 方法，该方法将 `list` 列表数据转换为树形结构并存储于 `treeSelecList` 中。
-3. 在 methods 中定义了一些需要使用到的方法，包括`initData` `listToTree` `getValue` `getValue2` 
-   - `initData` 方法在创建组件时被调用，其主要作用是将传入的列表数据转换为树形结构并存储于 `treeSelecList` 中。
-   - `listToTree` 方法将传入的列表数据转换为树形结构。
-   - `getValue` 和 `getValue2` 方法分别用于获取树形选择器选中的值，`getValue` 方法只会获取单选的选中值，`getValue2` 方法可以获取多选的选中值。
-4. 在 watch 中监听 `valueId` 和 `valueIds` 的变化，并在控制台输出相关信息。
-5. 使用该组件时，需要在父组件中引用该组件并传入一个列表数据。同时可以通过设置组件中的一些属性来控制树形选择器的行为，如是否单选或多选、是否折叠展开等。用户可以通过点击树形结构中的节点来获取选中的值。
-
-### 封装功能
-
-1. 支持单选和多选两种模式，通过 `multiple` 属性进行控制；
-2. 使用了 `el-tree` 和 `el-select` 两个 ElementUI 组件构建树形选择器；
-3. 可以通过传入的参数 `options` 和 `treeProps` 来自定义树形结构和展示内容；
-4. 单选模式下，当初始值 `valueId` 不为空时，会自动根据其设置当前选中的节点，并将其默认展开；
-5. 多选模式下，当初始值 `valueId` 不为空时，会自动根据其设置当前选中的节点，并将其默认展开；
-6. 在选项标签区域可点击删除已选项；
-7. 选项区域支持滚动条；
-8. 支持选择框宽度、大小、禁用等属性的配置。
-
-### 封装逻辑
-
-1. 定义组件名称 `tree-select`，同时定义了支持的 `props` 属性和默认值。
-2. 在 `data()` 中初始化了 `valueId` 和 `valueTitle` 两个数据，用于记录当前选中的节点的 ID 和展示标题。另外，定义了 `label` 数据用于记录当前分组。
-3. 在 `mounted()` 钩子函数中调用了 `initHandle()` 方法进行初始值的处理。
-4. `initHandle()` 方法主要处理了单选和多选两种模式下的初始值设置。单选模式下，通过 `getNode` 方法获取当前选中节点的信息，并将其展开和设为当前选中；多选模式下，则直接调用 `setCheckedKeys` 方法将树的节点勾选。
-5. 树形结构部分使用了 `el-tree` 组件，通过传入的 `options` 和 `treeProps` 参数自定义了树形结构和展示内容。同时，配置了一些参数，比如自动收起、严格遵循父子节点不互相关联等。
-6. 选择器部分使用了 `el-select` 组件，通过绑定 `value` 和 `input` 事件实现双向绑定和回调功能。还支持传入一些属性，比如选择框大小、清空按钮、禁用等等。
-7. 单选模式下，在节点被点击时会触发 `handleNodeClick` 方法，记录选中节点的信息并回调父组件传入的 `getValue` 方法。
-8. 多选模式下，通过监听 `check-change` 事件获取勾选节点的信息，并记录当前选中节点的信息。同时，在节点勾选变化时会根据 `checkStrictly` 属性的值来进行处理，实现父子节点勾选关联或不关联的效果。
-9. 在选择器中的标签区域，可以进行删除已选项的操作，通过监听 `remove-tag` 事件来实现。
-10. 最后，定义了一些常用方法，比如清除选中、统一处理子节点为不选中、统一处理父节点为选中等。
-
-
-
 ## 表格组件
 
 表格组件是一个方便展示和处理大量数据的界面元素，可以包含多种功能，如组合排序、筛选、slot 插槽、过滤器、操作列、展开行以及自定义分页等。
@@ -140,13 +52,11 @@
 - `type`: 列的类型，可以是 `selection`、`index` 或 `expand`，分别对应多选框、行索引和可展开按钮，默认为 `index`
 - `tableData`: 显示的表格数据，类型为数组，必选
 - `tableColumn`: 表格列的配置，类型为数组，必选
-- `tableOption`
-- : 表格操作列的配置，类型为对象，包括以下属性：
+- `tableOption`表格操作列的配置，类型为对象，包括以下属性：
   - `label`: 操作列的名称
   - `fixed`: 操作列是否固定
   - `width`: 操作列的宽度
-  - `options`
-  - : 操作列的选项，类型为数组，每个选项包括以下属性：
+  - `options`: 操作列的选项，类型为数组，每个选项包括以下属性：
     - `label`: 选项名称
     - `type`: 选项的类型，比如 `primary`、`success` 等
     - `icon`: 选项的图标，通过 fontawesome 类名来指定
@@ -154,8 +64,7 @@
 - `pagination`: 是否需要翻页组件，默认为 `true`
 - `layout`: 翻页组件的布局形式，类型为字符串，默认为 `"total, sizes, prev, pager, next, jumper"`
 - `pageSizes`: 每页显示的条数可选项，类型为数组，包含若干数字，默认为 `[10, 30, 50, 100]`
-- `paginationObj`:
-- : 翻页组件的相关参数，包括以下属性：
+- `paginationObj`:翻页组件的相关参数，包括以下属性：
   - `total`: 数据总条数
   - `currentPage`: 当前页码
   - `pageSize`: 每页显示的条数
@@ -182,27 +91,41 @@
 
 ### 封装的逻辑
 
-1. 定义 `props`
-
-定义了 8 个 `props` 用来接收传入的表格数据和配置项。包括：
+1. 定义了 8 个 `props` 用来接收传入的表格数据和配置项。包括：
 
 - `loading`：是否显示加载数据时的动效；
+
 - `stripe`：是否启用斑马纹样式；
+
 - `border`：是否启用带上下边框样式；
+
 - `type`：对应列的类型，包括索引、多选框和可展开按钮等；
+
 - `tableData`：表格数据；
+
 - `tableColumn`：表格列；
+
+  - `sortable`: 是否可排序: 默认情况下，对于字符串类型和数字类型，会采用升序排列方式。也可以sort-method自定义
+  - `slot`: 特定操作列是否需要插槽: 比如操作列：单独v-if判断然后slot渲染，默认slot展开渲染列表行
+  - `filters`: 是否需要筛选: 在列中设置`filters` `filter-method`属性即可开启该列的筛选，return row[property] === value; 决定保留哪项
+
 - `tableOption`：表格操作列（可选）；
+
 - `pagination`：是否需要翻页组件；
+
 - `layout`：翻页组件的布局配置；
+
 - `pageSizes`：每页显示数量的选项配置；
+
 - `paginationObj`：翻页组件相关的配置，包括总条目数、当前页数和每页显示数量。
 
-1. 实现表格
+  注意，props是对象或数组default要用 ()=> 工厂函数返回默认值，初始化返回一个独立的实例，是因为在 Vue.js 中，当 `default` 的值是一个对象或数组时，如果该对象或数组被多个组件所引用
 
-使用 Element UI 提供的 `el-table` 和 `el-table-column` 组件来实现表格。在 `el-table-column` 中，根据列的不同特性（如是否可排序、是否可筛选等），动态确定渲染哪个子组件。例如，对于设置了 `filters` 属性的列，则使用带有筛选功能的 `el-table-column` 组件；对于 `slot` 属性对应的列，则渲染组件内传入的插槽；否则，渲染默认的 `el-table-column` 组件。
+2. 实现表格
 
-1. 处理事件
+使用 Element UI 提供的 `el-table` 和 `el-table-column` 组件来实现表格。在 `el-table-column` 中，根据列的不同特性（如是否可排序、是否可筛选等），动态确定渲染哪个子组件。例如，对于设置了 `filters` 属性的列，则使用带有筛选功能的 `el-table-column` 组件；对于 `slot` 属性对应的列，则渲染组件内传入的插槽；否则，渲染默认的 `el-table-column` 组件。判断有无传入对象的属性，遍历判断有就v-if(item.filters)的字段，有就渲染
+
+3. 处理事件
 
 在 `methods` 中定义了多个处理事件的方法，包括：
 
@@ -214,13 +137,13 @@
 - `handleSizeChange`：处理翻页组件中每页显示数量的变化事件；
 - `handleCurrentChange`：处理翻页组件中当前页数的变化事件。
 
-这些方法通过 `v-on` 传递到父组件进行处理，并且在必要时传递相应的参数。
+这些方法通过 `$emit`传递到父组件进行处理，除了`toggleExpand`用this.$refs改当前展开，并且在必要时传递相应的参数。
 
-1. 翻页组件
+4. 翻页组件
 
 如果需要，使用 Element UI 提供的 `el-pagination` 组件来实现翻页组件。可以通过一些属性和方法来设置翻页组件的外观和交互行为，例如：每页显示数量的选项、布局配置、总条目数、当前页数和每页数量的同步修改等。
 
-1. 事件触发
+5. 事件触发
 
 通过 `$emit` 方法向父组件触发自定义事件，如点击操作按钮、选择行、滚动翻页等。
 
@@ -381,6 +304,92 @@ formData: {
 
 以上是这个组件封装的大致逻辑。该组件通过对 Element UI 中组件的引用和结合 Vue.js 的特性进行动态渲染，实现了可配置、灵活、易用的表单组件。
 
+## 树形选择器组件
+
+### 使用方式
+
+用户需要在组件中传入一个列表数据，将该列表转换成树形结构，然后渲染成可点击的树形结构。用户可以通过点击节点获取该节点的值，并将其显示在组件中。
+
+```html
+<Tree
+  :treeProps="props"
+  :options="treeSelecList"
+  v-model="valueId"
+  :clearable="isClearable"
+  :accordion="isAccordion"
+  :expandNode="expandNode"
+  size="small"
+  width="100%"
+  @getValue="getValue($event)"
+>
+</Tree>
+```
+
+#### 参数
+
+- `multiple`: 是否可多选，默认为 false，单选模式。
+- `clearable`: 可清空选项，默认为 true。
+
+- `treeProps`: 配置项，包括选项数据的 id、label、children 字段名，默认值为 `{ id: 'id', label: 'title', children: 'children' }`。 
+
+- `options`: 选项列表数据，树形结构的对象数组，默认值为 `[]`。 `accordion`: 自动收起节点，默认为 false。 
+
+- `checkStrictly`: 在显示复选框的情况下，是否严格的遵循父子不互相关联的做法，默认为 false。 `expand`: 是否展开所有节点，默认展开。
+
+- `expandParent`: 展开子节点的时候是否自动展开父节点，默认为 true。
+
+- `expandNode`: 是否在点击节点的时候展开或者收缩节点，默认值为 true，如果为 false，则只有点箭头图标的时候才会展开或者收缩节点。
+
+- `value`: 初始值，绑定 value 是为了外面也可以传值改变到里面的值双向绑定，默认为 null。
+
+- `collapse`: 多选时是否将选中值按文字的形式展示，默认为 false。 
+
+- ` size`: 选择框大小，默认为 small。
+
+- `width`: 选择框宽度，默认为 270px。 `disabled`: 是否禁用，默认为 false
+
+#### 方法
+
+- `input`: 组件值更新时触发的方法，在单选模式下 event 参数为当前选中项的 id，在多选模式下 event 参数为当前选中项的 id 组成的数组。
+- `clear`: 清空选项时触发的方法。
+- `remove-tag`: 多选模式下任一标签被删除时触发的方法。
+- `getValue`: 选项发生变化时触发的方法，在多选模式下 `valueId` 参数为当前选中项的 id 组成的数组，在单选模式下 `valueId` 参数为当前选中项的 id，`valueTitle` 参数为当前选中项的名称。
+
+### 使用逻辑
+
+1. 在 data 中定义一些需要用到的变量，包括 `props`、`list`、`treeSelecList`、`isClearable`、`isAccordion`、`expandNode`、`valueId`、`valueIds`、`valueIds2`，其中 `props` 是树形结构中的一些属性配置，`list` 是传入的列表数据，其他变量是一些控制树形选择器行为的开关和选中值。
+2. 在 created 钩子函数中调用 `initData` 方法，该方法将 `list` 列表数据转换为树形结构并存储于 `treeSelecList` 中。
+3. 在 methods 中定义了一些需要使用到的方法，包括`initData` `listToTree` `getValue` `getValue2` 
+   - `initData` 方法在创建组件时被调用，其主要作用是将传入的列表数据转换为树形结构并存储于 `treeSelecList` 中。
+   - `listToTree` 方法将传入的列表数据转换为树形结构。
+   - `getValue` 和 `getValue2` 方法分别用于获取树形选择器选中的值，`getValue` 方法只会获取单选的选中值，`getValue2` 方法可以获取多选的选中值。
+4. 在 watch 中监听 `valueId` 和 `valueIds` 的变化，并在控制台输出相关信息。
+5. 使用该组件时，需要在父组件中引用该组件并传入一个列表数据。同时可以通过设置组件中的一些属性来控制树形选择器的行为，如是否单选或多选、是否折叠展开等。用户可以通过点击树形结构中的节点来获取选中的值。
+
+### 封装功能
+
+1. 支持单选和多选两种模式，通过 `multiple` 属性进行控制；
+2. 使用了 `el-tree` 和 `el-select` 两个 ElementUI 组件构建树形选择器；
+3. 可以通过传入的参数 `options` 和 `treeProps` 来自定义树形结构和展示内容；
+4. 单选模式下，当初始值 `valueId` 不为空时，会自动根据其设置当前选中的节点，并将其默认展开；
+5. 多选模式下，当初始值 `valueId` 不为空时，会自动根据其设置当前选中的节点，并将其默认展开；
+6. 在选项标签区域可点击删除已选项；
+7. 选项区域支持滚动条；
+8. 支持选择框宽度、大小、禁用等属性的配置。
+
+### 封装逻辑
+
+1. 定义组件名称 `tree-select`，同时定义了支持的 `props` 属性和默认值。
+2. 在 `data()` 中初始化了 `valueId` 和 `valueTitle` 两个数据，用于记录当前选中的节点的 ID 和展示标题。另外，定义了 `label` 数据用于记录当前分组。
+3. 在 `mounted()` 钩子函数中调用了 `initHandle()` 方法进行初始值的处理。
+4. `initHandle()` 方法主要处理了单选和多选两种模式下的初始值设置。单选模式下，通过 `getNode` 方法获取当前选中节点的信息，并将其展开和设为当前选中；多选模式下，则直接调用 `setCheckedKeys` 方法将树的节点勾选。
+5. 树形结构部分使用了 `el-tree` 组件，通过传入的 `options` 和 `treeProps` 参数自定义了树形结构和展示内容。同时，配置了一些参数，比如自动收起、严格遵循父子节点不互相关联等。
+6. 选择器部分使用了 `el-select` 组件，通过绑定 `value` 和 `input` 事件实现双向绑定和回调功能。还支持传入一些属性，比如选择框大小、清空按钮、禁用等等。
+7. 单选模式下，在节点被点击时会触发 `handleNodeClick` 方法，记录选中节点的信息并回调父组件传入的 `getValue` 方法。
+8. 多选模式下，通过监听 `check-change` 事件获取勾选节点的信息，并记录当前选中节点的信息。同时，在节点勾选变化时会根据 `checkStrictly` 属性的值来进行处理，实现父子节点勾选关联或不关联的效果。
+9. 在选择器中的标签区域，可以进行删除已选项的操作，通过监听 `remove-tag` 事件来实现。
+10. 最后，定义了一些常用方法，比如清除选中、统一处理子节点为不选中、统一处理父节点为选中等。
+
 ## Toast
 
 封装了一个带有遮罩层的提示框组件。
@@ -418,17 +427,27 @@ this.$toast.show({
 
 1. 用于显示一个提示框，根据传入的 props 来控制提示框的样式和行为。具体逻辑如下：
 2. 根据传入的 props，决定是否显示遮罩层和提示文字，以及它们的位置和持续时间。
-3. 通过计算属性 computed 来生成相对应的动画，根据提示框的位置来设置不同的动画方式。动画效果包括淡入淡出和滑动等。
+3. 通过计算属性 computed 来生成相对应的动画，根据提示框的位置来设置不同的动画方式。动画效果包括淡入淡出和滑动等。其中，样式与动画的生成主要借助计算属性，动态计算并生成对应的 CSS 类名，并通过 :class 指令将其绑定到对应的元素上。同时，使用了 Vue 内置的 `transition `组件实现了过渡动画效果，`transition`通过设置 name 属性，可以指定过渡的 CSS 类名。
 4. 在 mounted 钩子函数中，可以控制提示框的显示时间，默认是 1500 毫秒，也可以通过传入 props 来调整显示时间。
 5. 最后，在组件的 template 中，通过使用 Vue.js 的过渡动画 transition，来实现提示框的动画效果。
 
 ### 插件注册导出
 
 1. 首先定义了一个名为 `Toast` 的对象，并在该对象中定义了 `install` 方法，该方法用于在 Vue 中定义插件，实现全局调用。
+
 2. 在 `install` 方法中，`Toast` 通过创建一个包含 Vue 组件实例的构造器 `toastTpl`，然后在该构造器的基础上实例化一个 Vue 组件 `$vm`。
+
 3. 接着，在该组件的生命周期函数中，使用 `$mount` 手动开启编译，并将其挂载到 `document.body` 上，用于显示 Toast。
+
 4. 然后，在 Vue 的原型上添加实例方法 `$toast`，用于控制 toast 的显示与隐藏，并实现全局调用。在 `show` 方法中，根据传入的参数类型判断，传入相应的 props，设置组件内部 `show` 属性为 true，显示 Toast。并通过 `setTimeout` 来控制 Toast 的消失时间。
+
 5. 最后，通过 default 导出 `Toast` 插件，以便在其他地方引入使用。
+
+   简单描述: 
+
+   1. 首先创建一个构造器，定义这个弹窗组件需要具备的属性和方法。
+   2. 然后生成一个全局唯一的弹窗组件实例，并把它插入到页面中作为持久组件。
+   3. 最后在 Vue 的原型上添加 $toast 属性，用传入的参数设置弹窗内容和样式。
 
 ## Confirm
 
@@ -547,9 +566,11 @@ npm install file-saver -S npm install xlsx -S npm install script-loader -D
 4. 调用formatJson方法，将list中的数据格式化为二维数组，每个小数组代表一行数据，每个元素代表一列数据。
 5. 调用Excel的export_json_to_excel方法，将处理好的数据导出为Excel文件。
 
-具体来说，formatJson方法通过map函数对jsonData进行遍历，返回一个新的数组即data。每个元素都是数组类型，其长度与filterVal相同，而元素的值是从jsonData中按照filterVal指定的属性名依次取出的值。也就是说，这个方法掌握了如何从jsonData中取出特定属性，并按照指定的顺序将这些值保存到一个数组中。
+具体来说，formatJson方法通过map函数对jsonData进行遍历，用于将给定的 `jsonData` 数据转换为二维数组并按照指定的属性名和顺序进行排序。
 
-最后，调用Excel的export_json_to_excel方法将数据导出到Excel文件中。为了格式化Excel文件，需要提供导出的数据（data）、表头（header）、档案类型（bookType）、文件名称（filename）和自动列宽标志（autoWidth）等参数，以便生成一个符合要求格式的Excel表格。
+每个元素都是数组类型，其长度与filterVal相同，而元素的值是从jsonData中按照filterVal指定的属性名依次取出的值。也就是说，这个方法掌握了如何从jsonData中取出特定属性，并按照指定的顺序将这些值保存到一个数组中。
+
+最后，调用Excel的export_json_to_excel方法将数据导出到Excel文件中。为了格式化Excel文件，需要提供导出的数据（data）、表头（header）、档案类型（bookType）、文件名称（filename）和自动列宽标志（autoWidth）等参数，以便生成一个符合要求格式的Excel表格。值可以在页面上设置下来框或输入框，v-model动态绑定内容，动态传入
 
 ### 实现的逻辑
 
@@ -594,10 +615,10 @@ npm install file-saver -S npm install xlsx -S npm install script-loader -D
 ### 使用的逻辑
 
 1. 用户在页面上选择要上传的Excel文件；
-2. 执行 `beforeUpload` 方法，判断文件大小是否小于 1M，若符合要求则返回 `true`，否则提示用户不可上传超过 1M 的文件并返回 `false`；
+2. 执行 `beforeUpload` 方法，判断文件大小是否小于 2M，若符合要求则返回 `true`，否则提示用户不可上传超过 2M 的文件并返回 `false`；
 3. 当文件上传成功后，调用 `handleSuccess` 方法，将 Excel 表格数据转换成对应的格式并显示在页面上。同时，把数据按照需要的格式存储起来，然后再发送到后端进行处理。
 
-其中，`format` 方法是用于将表格中的数据按照后端的命名规范进行转换。它会根据表格中每个属性的中文名称找到对应的英文名称，并将其作为新对象的属性名。同时，如果当前属性名是日期相关的，则需要调用 `formatExcelDate` 方法将 Excel 中的日期格式转换成编程语言中的日期格式。最后返回转换后的结果列表。
+其中，`format` 方法是用于将表格中的数据如属性名，按照后端的命名规范进行转换。它会根据表格中每个属性的中文名称找到对应的英文名称，并将其作为新对象的属性名，需要自定义映射表mapInfo传入中文对应的英文字段。同时，如果当前属性名是日期相关的，则需要调用 `formatExcelDate` 方法将 Excel 中的日期格式转换成编程语言中的日期格式。最后返回转换后的结果列表。
 
 ### 实现的逻辑
 
