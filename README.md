@@ -77,6 +77,16 @@
 - `handle-size-change`: 每页显示条数改变事件，传递改变后的 size 参数
 - `handle-current-change`: 当前页码改变事件，传递改变后的 current 参数
 
+### 使用的逻辑
+
+1. 引入 table-custom 组件
+2. 配置表格数据、列、和操作列，将它们作为 props 传递给 table-custom 组件
+3. 可选地配置 table-custom 组件的属性，例如是否启用选择功能、是否显示斑马纹、是否显示边框、是否显示 loading 状态、分页配置等
+4. 如果需要对某些列进行过滤，需要先定义一个 filterCondition 数组，并将其设置为 table-column 中 filters 的值。filterCondition 数组中每个元素包含 text 和 value 两个属性，text 表示筛选条件的文本，value 表示该条件的值。
+5. 如果需要对某个字段进行特殊渲染，可以在 table-column 中设置 slot: true，然后编写对应的插槽代码。
+6. 如果需要在操作列中添加按钮，需要在 table-option 中设置 options 数组，数组中每个元素表示一个按钮。按钮包括 label、type、icon、methods 四个属性，分别表示按钮文字、类型、图标和点击按钮时要执行的方法。方法需要在父组件中实现，通过 @handle-button-click 事件与 table-custom 组件相连。
+7. 在父组件中处理 table-custom 组件的事件，例如 handleSortChange、handleSelectionChange、handleCurrentChange、handleSizeChange 等。可以根据具体需求自行编写相应的处理函数。
+
 ### 封装的功能
 
 1. 表格数据的加载动效；
@@ -163,7 +173,7 @@
 
 本组件是一个表单组件，可以方便地生成包含多种表单元素的表单。使用时需要传递 `items` 和 `buttons` 数组。
 
-### 使用方式:
+### 使用方式
 
 ```javascript
 <Form ref="myForm" :data="formData"></Form>
@@ -209,7 +219,7 @@ formData: {
 }
 ```
 
-### 参数:
+### 参数
 
 - `data`: 包含表单所有配置信息的对象，结构如下：
 
@@ -258,7 +268,7 @@ formData: {
   - `trigger`: 字符串，选填，代表触发验证的事件类型。可选值有：blur、change 等。
   - `message`: 字符串，必填，代表验证失败的提示信息。
 
-### 方法:
+### 方法
 
 - `callSelf(formName, action, callback)`: 自定义方法，用于执行表单相关的操作。
   - `formName`: 字符串，必填，代表要操作的表单的 ref 属性名。
@@ -271,7 +281,7 @@ formData: {
   - `row`: 对象，必填，包含了要设置的表单数据属性和值的键值对。
 - `resetForm()`: 自定义方法，用于重置表单。
 
-### 使用的逻辑:
+### 使用的逻辑
 
 1. 在父组件中引入 Form 组件，在 data 中定义 formData，并将其传入 Form 组件中。
 2. 在 formData 中定义表单元素列表 items，包括每个表单元素的 type、label、prop、width、default、placeholder 和 options 等属性。
@@ -325,7 +335,7 @@ formData: {
 </Tree>
 ```
 
-#### 参数
+### 参数
 
 - `multiple`: 是否可多选，默认为 false，单选模式。
 - `clearable`: 可清空选项，默认为 true。
@@ -348,7 +358,7 @@ formData: {
 
 - `width`: 选择框宽度，默认为 270px。 `disabled`: 是否禁用，默认为 false
 
-#### 方法
+### 方法
 
 - `input`: 组件值更新时触发的方法，在单选模式下 event 参数为当前选中项的 id，在多选模式下 event 参数为当前选中项的 id 组成的数组。
 - `clear`: 清空选项时触发的方法。
