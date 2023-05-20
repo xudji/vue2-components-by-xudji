@@ -1,9 +1,4 @@
-<!--
- * @Description: 树形选择器
- * @Author: HMM
- * @Date: 2021-05-24 10:27:34
- * @FilePath: \components\tree-select.vue
--->
+
 <template>
   <div class="treeSelect">
     <el-select

@@ -97,6 +97,7 @@ export default {
         this.readerData(rawFile);
       }
     },
+    // excel 文件转化为 二进制
     readerData(rawFile) {
       this.loading = true;
       return new Promise((resolve, reject) => {

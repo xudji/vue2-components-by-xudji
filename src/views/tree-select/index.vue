@@ -1,10 +1,4 @@
 
-<!--
- * @Description: 树形下拉框 - 使用示例
- * @Author: HMM
- * @Date: 2021-01-14 16:04:43
- * @FilePath: \treeSelectDemo.vue
--->
 
 <template>
   <div class="messageDemo">

@@ -231,10 +231,10 @@ export default {
 };
 </script>
   
-  <style lang="stylus" scoped>
-  .pagination {
-    position: relative;
-    text-align: center;
-    padding: 5px 0;
-  }
+  <style lang="scss" scoped>
+.pagination {
+  position: relative;
+  text-align: center;
+  padding: 5px 0;
+}
 </style>
