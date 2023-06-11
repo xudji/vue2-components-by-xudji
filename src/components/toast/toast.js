@@ -13,10 +13,10 @@ Toast.install = function (Vue, options) { // vue的install方法，用于定义v
  // let $vm = new toastTpl({
  //  el: document.createElement('div')
  // })
- let $vm = new toastTpl() // 实例化vue实例
- // 此处使用$mount来手动开启编译。用$el来访问元素，并插入到body中
+ let $vm = new toastTpl() // 实例化vue弹框组件实例
+ // 此处使用$mount来手动开启编译，当一个 Vue 实例被创建并挂载到页面上后，$el 属性就会被赋值为对应的根 DOM 元素，默认为body元素
  let tpl = $vm.$mount().$el
- document.body.appendChild(tpl)
+ document.body.appendChild(tpl) // 插入到body中
  
  // 在vue原型上添加实例方法
  Vue.prototype.$toast = { // 在Vue的原型上添加实例方法，以全局调用

@@ -10,8 +10,8 @@
     </div>
   </transition>
 </template>
-   
-  <script>
+
+<script>
 export default {
   data() {
     return {};
@@ -74,8 +74,8 @@ export default {
   },
 };
 </script>
-   
-  <style lang='scss'>
+
+<style lang="scss">
 .box {
   position: fixed;
   top: 50%;
@@ -154,4 +154,3 @@ export default {
   opacity: 0;
 }
 </style>
-  

@@ -73,13 +73,13 @@ export default {
   },
 
   methods: {
-    // 确定,将promise断定为resolve状态
+    // 确定,将promise断定为resolve状态，然后执行 .then() 中的回调函数
     confirm() {
       this.isShowMessageBox = false;
       this.resolve("confirm");
       this.remove();
     },
-    // 取消,将promise断定为reject状态
+    // 取消,将promise断定为reject状态，然后执行 .then() 中的回调函数
     cancel() {
       this.isShowMessageBox = false;
       this.reject("cancel");
@@ -88,11 +88,13 @@ export default {
     // 弹出messageBox,并创建promise对象
     showMsgBox() {
       this.isShowMessageBox = true;
+      // 这里通过 this 关键字将 Promise 对象和resolve()和reject()方法保存在了当前组件实例的 resolve 和 reject 属性中，从而使这两个方法能够在组件实例的其他方法中被调用。
       this.promise = new Promise((resolve, reject) => {
         this.resolve = resolve;
         this.reject = reject;
       });
       // 返回promise对象
+      
       return this.promise;
     },
     remove() {
@@ -100,6 +102,7 @@ export default {
         this.destroy();
       }, 100);
     },
+    // 手动创建 Promise 对象的代码中，因为 Promise 对象可能会被多次创建、修改和调用，如果不及时销毁，就会造成内存泄漏问题。
     destroy() {
       this.$destroy();
       document.body.removeChild(this.$el);
@@ -203,6 +206,5 @@ export default {
   opacity: 0;
   transform: scale(0.98);
 }
-
 </style>
   

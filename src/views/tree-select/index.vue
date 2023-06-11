@@ -94,7 +94,7 @@ export default {
       treeSelectList: [], // 处理好的树形列表数组
       isClearable: true, // 可清空（可选）
       isAccordion: false, // 可收起（可选）
-      valueId: null, // 初始ID（可选）
+      valueId: "", // 初始ID（可选）
       valueIds: [],
       valueIds2: [],
     };

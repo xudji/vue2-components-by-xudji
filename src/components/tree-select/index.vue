@@ -230,10 +230,10 @@ export default {
         }
       }
       // 多选
-      if (this.valueId && this.multiple) {
-        this.defaultExpandedKeys = this.valueId; // 设置默认展开
+      if (this.valueIds && this.multiple) {
+        this.defaultExpandedKeys = this.valueIds; // 设置默认展开
         this.$nextTick(() => {
-          this.$refs.selectTree.setCheckedKeys(this.valueId); // 设置默认选中
+          this.$refs.selectTree.setCheckedKeys(this.valueIds); // 设置默认选中
         });
       }
     },
@@ -246,6 +246,7 @@ export default {
       this.valueTitle = node[this.treeProps.label];
       this.valueId = node[this.treeProps.id];
       this.defaultExpandedKey = [];
+
       this.$emit("getValue", this.valueId, this.valueTitle);
     },
     /**
@@ -283,6 +284,7 @@ export default {
     handleClear() {
       this.valueTitle = "";
       this.valueId = "";
+      // 默认展开的节点清空，就不展开
       this.defaultExpandedKeys = [];
       // 清除树
       if (this.multiple) {

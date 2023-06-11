@@ -299,6 +299,7 @@ export default {
      */
     handleRemoveTag(val) {
       var checkedNodes = this.$refs.selectTree.getCheckedNodes();
+
       var node = checkedNodes.find(
         (node) => node[this.treeProps.label] === val
       );
